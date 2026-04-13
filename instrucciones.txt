@@ -1,0 +1,369 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+DESARROLLO:
+Relaciona el formulario diseñado con los campos correspondientes al a los libros y productos de la librería: Id del producto, código universal de producto o también llamado de barra del fabricante; código QR; nombre del producto, imagen del producto, identificador de lote del producto (numérico único), tipo de producto (oficina, escolar, mueblería), Ciudad (Santiago, Valparaíso), número de estante (3 dígitos numéricos), cantidad en inventario de piezas, cantidad inventariada de cajas/empaques, cantidad de piezas en cajas/empaques y total de piezas inventariada.
+La relación entre el formulario diseñado y los campos de datos requeridos para la gestión de inventario de la librería "Mis útiles escolares" se establece mediante un proceso estructurado que considera la naturaleza de cada dato y su representación en el sistema web. Esta vinculación es fundamental para asegurar que la información capturada desde la interfaz de usuario se corresponda de manera exacta y coherente con la estructura de almacenamiento definida en la base de datos, permitiendo así la gestión eficiente de los registros de productos en ambas tiendas ubicadas en Santiago y Valparaíso.
+El formulario responsive, como componente de la capa de presentación del sistema, debe contener elementos de entrada de datos que capturen cada uno de los atributos especificados para los productos de la librería. Cada campo del formulario se asocia directamente con un campo correspondiente en la entidad o tabla de la base de datos que representa el producto. A continuación, se detalla la relación específica para cada uno de los campos mencionados, estableciendo su propósito, tipo de dato esperado y su función dentro del contexto del inventario:
+Id del producto: Este campo se relaciona con un identificador único y autoincremental en la base de datos. Aunque el formulario podría mostrarlo para edición o consulta, típicamente no es ingresado por el usuario, sino generado automáticamente por el sistema manejador de base de datos (SGBD) al insertar un nuevo registro. Su función es servir como clave primaria (PRIMARY KEY) para garantizar la integridad de la entidad, tal como se menciona en el contexto de la conexión a bases de datos y la gestión de entidades como "Cliente, Alumno, Profesor, Materia, Factura y otros". Este campo asegura que cada producto registrado en el sistema sea distinguible de manera única, incluso si otros atributos pudieran repetirse.
+Código universal de producto o código de barra del fabricante: Este campo del formulario captura un dato alfanumérico que representa un estándar de identificación comercial. Su relación con la base de datos implica la creación de un campo de tipo VARCHAR de longitud adecuada para albergar códigos como UPC o EAN. Dado que es un dato crítico para la identificación externa del producto y puede ser objeto de búsquedas o escaneos, debe considerarse su indexación en la base de datos para optimizar las consultas SELECT.
+Código QR: Similar al código de barras, este campo del formulario se destina a almacenar una cadena de texto que representa la información codificada en el código QR. En la base de datos, se relaciona con un campo de texto extenso, como VARCHAR o TEXT. El código QR podría contener una URL, el ID del producto u otra información relevante, y su almacenamiento permite la generación o verificación de dichos códigos para etiquetas de estantería o productos.
+Nombre del producto: Este es un campo de texto fundamental que el usuario ingresa en el formulario. Se relaciona con un campo de tipo VARCHAR en la base de datos, con una longitud suficiente para describir el producto (ej. "Cuaderno universitario 100 hojas cuadro grande"). Este campo es esencial para las consultas y la presentación de información en el sistema, formando parte de las propiedades básicas de la entidad "Producto".
+Imagen del producto: El formulario debe proveer un mecanismo para seleccionar o cargar un archivo de imagen. La relación con la base de datos puede manejarse de dos formas principales: almacenando la ruta del archivo en el sistema de archivos del servidor dentro de un campo VARCHAR, o utilizando tipos de datos BLOB (BLOB, MEDIUMBLOB) para guardar el contenido binario de la imagen directamente en la base de datos. La elección dependerá de consideraciones de rendimiento y diseño del sistema, siendo común la práctica de almacenar la ruta.
+Identificador de lote del producto (numérico único): Este campo del formulario debe restringir la entrada a valores numéricos. En la base de datos, se relaciona con un campo de tipo entero (INT o BIGINT) y se le debe aplicar una restricción de unicidad (UNIQUE). Este identificador es crucial para la trazabilidad y la aplicación del procedimiento de validación denominado "Identificador único", el cual valida que los datos ingresados no se dupliquen, asegurando que cada lote tenga una identificación exclusiva en el sistema.
+Tipo de producto (oficina, escolar, mueblería): El formulario debe presentar este campo como una lista de opciones predefinidas, implementando lo que en los contenidos se describe como "Cuadro desplegable". Este procedimiento de validación asegura que los datos estén en las posibilidades predeterminadas de una lista. En la base de datos, se puede relacionar con un campo de tipo ENUM ('oficina', 'escolar', 'mueblería') o, de forma más normalizada, con una clave foránea (FOREIGN KEY) que apunte a una tabla "TiposProducto". Esta última opción permite mayor flexibilidad para añadir nuevos tipos en el futuro.
+Ciudad (Santiago, Valparaíso): Al igual que el tipo de producto, este campo se implementa en el formulario mediante un "Cuadro desplegable", limitando las opciones a las dos ciudades donde la librería tiene presencia. En la base de datos, se puede manejar con un campo ENUM ('Santiago', 'Valparaíso') o una clave foránea a una tabla "Ciudades". Esta restricción es vital para segmentar el inventario por ubicación, un requisito central del caso planteado.
+Número de estante (3 dígitos numéricos): El formulario debe incluir una validación de entrada que restrinja este campo a exactamente tres dígitos numéricos. Esto corresponde a una "Comprobación de longitud" y una "Verificación de tipo". En la base de datos, se relaciona con un campo de tipo CHAR(3) o VARCHAR(3) con una restricción (CONSTRAINT) que verifique que su contenido sea numérico y de longitud 3. Este campo es clave para la localización física del producto dentro de cada tienda.
+Cantidad en inventario de piezas: Este campo del formulario captura la cantidad teórica de piezas individuales que deberían estar en el inventario. Es un campo numérico entero. Se relaciona con un campo INT en la base de datos.
+Cantidad inventariada de cajas/empaques: Similar al anterior, este campo numérico captura la cantidad de cajas o empaques cerrados contados durante el inventario físico. Se relaciona con un campo INT en la base de datos.
+Cantidad de piezas en cajas/empaques: Este campo numérico, también INT, especifica cuántas piezas individuales contiene cada caja o empaque estándar del producto. Este dato es constante para un producto y lote específicos y es necesario para calcular el total.
+Total de piezas inventariada: Este campo es un valor calculado. El formulario no debería permitir su ingreso manual para evitar errores de inconsistencia, uno de los problemas que el sistema busca solucionar. En su lugar, se calcula automáticamente como la suma de la "Cantidad en inventario de piezas" (piezas sueltas) más el producto de la "Cantidad inventariada de cajas/empaques" por la "Cantidad de piezas en cajas/empaques". En la base de datos, este campo puede ser calculado en las consultas SELECT o, si se almacena, se actualiza mediante un procedimiento almacenado o TRIGGER para mantener la integridad de los datos. El cálculo asegura que el dato final sea preciso y consistente, abordando directamente la problemática de lentitud y errores de los métodos previos basados en papel y hojas de cálculo.
+En resumen, la relación del formulario con los campos de la base de datos se logra mediante la correspondencia directa de cada elemento de entrada del formulario con una columna específica en la tabla "Productos". Esta tabla, a su vez, se gestiona en un sistema manejador de base de datos (SGBD) como MySQL, tal como se exige en la actividad. La correcta definición de tipos de datos, longitudes y restricciones en la base de datos, en conjunto con los mecanismos de validación implementados en el formulario, garantiza que los datos gestionados sean exactos, seguros y consistentes, cumpliendo con el objetivo de la validación de datos de asegurar que la información sea apta para el propósito deseado y evitar la corrupción o los "agujeros de seguridad por la falta de información correcta".
+
+
+Revisa la forma en que se almacenan los datos que se ingresan al formulario para verificar la validez de los mismos.
+Para revisar la forma en que se almacenan los datos ingresados al formulario y verificar su validez, es necesario examinar el flujo completo de la información, desde que el usuario interactúa con la interfaz hasta que los datos son finalmente persistidos en los archivos de la base de datos. Este proceso no es una simple transferencia, sino una secuencia de verificaciones y transformaciones que aseguran que solo los datos que cumplen con los criterios de calidad establecidos sean almacenados, tal como se conceptualiza en las funciones y pruebas de validación de datos. La verificación de la validez del almacenamiento implica, por tanto, una inspección en dos niveles: las validaciones del lado del cliente (en el formulario) y las restricciones y procedimientos del lado del servidor (en la base de datos).
+El procedimiento comienza con las pruebas de validación de datos (PVD) implementadas directamente en el formulario responsive. Estas validaciones actúan como una primera línea de defensa para asegurar que los datos enviados al servidor sean razonables y viables, evitando el envío de información claramente incorrecta o incompleta. Para el formulario de la librería "Mis útiles escolares", se aplican los siguientes procedimientos de validación, los cuales se corresponden directamente con los descritos:
+Comprobación de presencia: Se aplica a todos los campos que son de carácter obligatorio para el registro del producto. Por ejemplo, el "nombre del producto", el "tipo de producto", la "ciudad" y las cantidades no pueden estar en blanco. El formulario, mediante atributos como required en HTML5 o mediante funciones en el lenguaje de programación cliente (JavaScript), impide el envío del formulario hasta que estos campos sean completados. Esto evita que lleguen registros incompletos a la base de datos, lo cual es un beneficio clave de la validación de datos.
+Verificación de tipo: El formulario garantiza que los datos correspondan al tipo esperado. Para campos como "identificador de lote", "número de estante", "cantidad en inventario de piezas", "cantidad inventariada de cajas/empaques" y "cantidad de piezas en cajas/empaques", el campo de entrada se configura como type="number", impidiendo la introducción de letras o caracteres no numéricos.
+Comprobación de longitud: Se utiliza específicamente para el campo "número de estante". El formulario puede emplear el atributo pattern de HTML5 con una expresión regular (^\d{3}$) o una función JavaScript que verifique que la longitud de la cadena ingresada sea exactamente de tres caracteres y que todos ellos sean dígitos. De esta manera, se asegura que este dato cumpla con el formato predeterminado antes de ser enviado.
+Cuadro desplegable: Este procedimiento se implementa para los campos "tipo de producto" y "ciudad". El formulario utiliza elementos <select> que limitan las opciones a una lista predefinida ("oficina", "escolar", "mueblería" y "Santiago", "Valparaíso", respectivamente). Esto asegura de manera absoluta que los datos ingresados estén dentro del conjunto de valores permitidos, eliminando la posibilidad de errores tipográficos o valores arbitrarios que luego causarían inconsistencia en los reportes.
+Formato de verificación: Para campos como el "código universal de producto", se podría implementar una validación de formato mediante una expresión regular en el atributo pattern para asegurar que coincida con la estructura esperada de un código de barras (por ejemplo, una secuencia de 12 o 13 dígitos). De manera similar, el "código QR" podría validarse para que contenga un formato específico si la librería así lo requiere.
+Identificador único: Aunque la validación estricta de unicidad a nivel de toda la base de datos solo puede ocurrir en el servidor, el formulario puede implementar una verificación asíncrona. Por ejemplo, cuando el usuario termina de escribir el "identificador de lote", una petición AJAX al servidor puede consultar la base de datos para verificar si ese número ya existe. Esto proporciona una retroalimentación inmediata al usuario ("Este lote ya está registrado"), mejorando la usabilidad y evitando un error posterior al envío.
+Una vez que los datos del formulario superan todas las validaciones del lado del cliente, son enviados al servidor web. Aquí, un software cliente escrito en un lenguaje de programación (como PHP, Python, Java, entre otros) recibe los datos. Este software cliente es responsable de establecer la conexión a la base de datos (CBD). La conexión se crea utilizando un controlador o proveedor específico para MySQL y una cadena de conexión que incluye las credenciales de autenticación: la dirección del servidor (Server), el nombre de la base de datos (Database), el identificador de usuario (User ID) y la contraseña (Pwd). Es imperativo que esta conexión se abra y se cierre adecuadamente para gestionar los recursos finitos del servidor, tal como se describe en la teoría de conexiones.
+Tras establecer la conexión, el software cliente construye una sentencia SQL (Query) para insertar, modificar o eliminar datos. Por ejemplo, una sentencia de inserción (INSERT INTO productos (...) VALUES (...)) incorpora los valores recibidos del formulario. Es en este punto donde se realiza la segunda capa de verificación de validez, la más crítica y definitiva, a cargo del SGBD (MySQL).
+El almacenamiento final de los datos está gobernado por la definición de la tabla en la base de datos, que incluye restricciones (CONSTRAINTS) que actúan como reglas de validación inherentes:
+Tipos de Datos y Longitud: Al definir la tabla productos, cada columna tiene un tipo de dato específico (ej. INT, VARCHAR(255), ENUM). Si el software cliente intenta insertar un valor de texto en un campo entero, o una cadena de 10 caracteres en un VARCHAR(3), el SGBD rechazará la operación con un error. Esto refuerza la Verificación de tipo y la Comprobación de longitud a nivel de almacenamiento.
+Restricción NOT NULL: Para los campos identificados como obligatorios, la columna se define con la restricción NOT NULL. Si la sentencia INSERT omite un valor para una de estas columnas o intenta insertar un NULL explícito, MySQL rechazará la inserción. Esta es la implementación definitiva de la Comprobación de presencia.
+Restricción UNIQUE: Para el campo "identificador de lote del producto", se define una restricción UNIQUE. Cuando se ejecuta una sentencia INSERT o UPDATE que intenta duplicar un valor ya existente en esta columna, MySQL lanza un error de clave duplicada (Duplicate entry). Esta es la aplicación rigurosa del procedimiento de Identificador único a nivel de toda la base de datos, garantizando que no existan dos registros con el mismo número de lote.
+Restricción CHECK (Integridad de Dominio): Para el campo "número de estante", se puede definir una restricción CHECK (soportada en versiones recientes de MySQL) que valide que el valor cumpla con una expresión regular (numero_estante REGEXP '^[0-9]{3}$'). Para los campos "ciudad" y "tipo de producto" definidos como ENUM, el propio tipo de dato actúa como una restricción CHECK, limitando los valores posibles. Esto implementa el Formato de verificación y el Cuadro desplegable a nivel de base de datos.
+Integridad Referencial: Aunque no se menciona explícitamente en la lista de campos del caso, una base de datos bien diseñada podría utilizar la integridad referencial. Por ejemplo, si se opta por normalizar "ciudad" en una tabla aparte ciudades con id y nombre, la tabla productos tendría una columna ciudad_id que es una clave foránea (FOREIGN KEY) que referencia a ciudades(id). El SGBD aseguraría que no se pueda insertar un ciudad_id que no exista en la tabla ciudades.
+Finalmente, si todos los comandos SQL se ejecutan con éxito y no violan ninguna restricción de la base de datos, los datos son físicamente almacenados en los archivos de la base de datos en el dispositivo de almacenamiento del servidor. El SGBD confirma el éxito de la operación al software cliente, el cual a su vez puede notificar al usuario. De esta manera, la revisión de la forma en que se almacenan los datos confirma un proceso de validación en múltiples capas: primero, una validación "amigable" e inmediata en el formulario, y segundo, una validación "férrea" y definitiva en el motor de la base de datos. Ambas son esenciales para garantizar que los datos almacenados sean válidos, completos y consistentes, eliminando los problemas de lentitud e inconsistencia del sistema anterior basado en papel y hojas de cálculo.
+Elabora el formulario para permitir el ingreso, eliminación y modificación de datos del producto de la librería. Para esto se debe utilizar MySQL.
+La elaboración del formulario y su integración con MySQL para permitir las operaciones de ingreso, eliminación y modificación de datos de los productos de la librería "Mis útiles escolares" implica la construcción de una interfaz de usuario funcional y su conexión a una base de datos estructurada. A continuación, se detalla el diseño del formulario y, fundamentalmente, las sentencias Querys de MySQL requeridas para cada operación, siguiendo los principios de gestión de datos descritos.
+Diseño del Formulario Web (HTML)
+El formulario se construye en HTML, asegurando que sea "responsive" mediante el uso de CSS (por ejemplo, con Flexbox o Grid). Incluye campos de entrada para cada uno de los atributos del producto, con las validaciones del lado del cliente integradas.
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestión de Inventario - Mis útiles escolares</title>
+    <style>
+        /* Estilos CSS para hacer el formulario responsive y claro */
+        body { font-family: sans-serif; }
+        .form-container { max-width: 800px; margin: 20px auto; padding: 20px; border: 1px solid #ccc; border-radius: 5px; }
+        .form-group { margin-bottom: 15px; display: flex; flex-wrap: wrap; align-items: center; }
+        .form-group label { width: 200px; font-weight: bold; }
+        .form-group input, .form-group select { flex: 1; padding: 8px; border: 1px solid #ddd; border-radius: 4px; }
+        .form-group input[type="file"] { padding: 5px; }
+        .form-actions { text-align: right; margin-top: 20px; }
+        .form-actions button { padding: 10px 15px; margin-left: 10px; border: none; border-radius: 4px; cursor: pointer; }
+        .btn-primary { background-color: #007bff; color: white; }
+        .btn-danger { background-color: #dc3545; color: white; }
+        .btn-warning { background-color: #ffc107; color: black; }
+        .btn-info { background-color: #17a2b8; color: white; }
+        /* Estilos para mensajes de error/validación */
+        .error-message { color: red; font-size: 0.9em; margin-left: 200px; }
+    </style>
+</head>
+<body>
+    <div class="form-container">
+        <h2>Formulario de Gestión de Productos</h2>
+        <!-- El formulario para ingreso y modificación -->
+        <form id="productoForm" action="gestionar_producto.php" method="post" enctype="multipart/form-data">
+            <!-- Campo oculto para el ID, usado en modificaciones -->
+            <input type="hidden" id="id_producto" name="id_producto">
+
+            <!-- Campos de texto y número -->
+            <div class="form-group">
+                <label for="codigo_barra">Código Universal de Producto:</label>
+                <input type="text" id="codigo_barra" name="codigo_barra" maxlength="13" pattern="\d*" title="Ingrese solo dígitos">
+            </div>
+            <div class="form-group">
+                <label for="codigo_qr">Código QR (texto):</label>
+                <input type="text" id="codigo_qr" name="codigo_qr">
+            </div>
+            <div class="form-group">
+                <label for="nombre_producto">Nombre del Producto: *</label>
+                <input type="text" id="nombre_producto" name="nombre_producto" required>
+            </div>
+            <div class="form-group">
+                <label for="imagen_producto">Imagen del Producto:</label>
+                <input type="file" id="imagen_producto" name="imagen_producto" accept="image/*">
+            </div>
+            <div class="form-group">
+                <label for="id_lote">Identificador de Lote (Numérico Único): *</label>
+                <input type="number" id="id_lote" name="id_lote" required>
+                <span id="lote-error" class="error-message"></span>
+            </div>
+            <div class="form-group">
+                <label for="tipo_producto">Tipo de Producto: *</label>
+                <select id="tipo_producto" name="tipo_producto" required>
+                    <option value="">Seleccione...</option>
+                    <option value="oficina">Oficina</option>
+                    <option value="escolar">Escolar</option>
+                    <option value="muebleria">Mueblería</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="ciudad">Ciudad: *</label>
+                <select id="ciudad" name="ciudad" required>
+                    <option value="">Seleccione...</option>
+                    <option value="Santiago">Santiago</option>
+                    <option value="Valparaiso">Valparaíso</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="num_estante">Número de Estante (3 dígitos): *</label>
+                <input type="text" id="num_estante" name="num_estante" required pattern="\d{3}" maxlength="3" title="Debe ingresar exactamente 3 dígitos numéricos">
+            </div>
+            <div class="form-group">
+                <label for="cant_inventario_piezas">Cant. en Inventario de Piezas: *</label>
+                <input type="number" id="cant_inventario_piezas" name="cant_inventario_piezas" value="0" required min="0">
+            </div>
+            <div class="form-group">
+                <label for="cant_cajas">Cantidad Inventariada de Cajas/Empaques: *</label>
+                <input type="number" id="cant_cajas" name="cant_cajas" value="0" required min="0">
+            </div>
+            <div class="form-group">
+                <label for="piezas_por_caja">Cantidad de Piezas en Cajas/Empaques: *</label>
+                <input type="number" id="piezas_por_caja" name="piezas_por_caja" value="1" required min="1">
+            </div>
+            <!-- El total se calcula, no se ingresa -->
+            <div class="form-group">
+                <label>Total de Piezas Inventariada:</label>
+                <span id="total_piezas_calculado">0</span>
+            </div>
+
+            <div class="form-actions">
+                <!-- Botón para operación de Ingreso/Modificación -->
+                <button type="submit" name="accion" value="guardar" class="btn-primary" id="btnGuardar">Guardar Producto</button>
+                <!-- Botón para operación de Eliminación (se habilita al seleccionar un producto para modificar) -->
+                <button type="submit" name="accion" value="eliminar" class="btn-danger" id="btnEliminar" disabled>Eliminar Producto</button>
+                <button type="button" id="btnLimpiar" class="btn-warning">Limpiar Formulario</button>
+            </div>
+        </form>
+
+        <hr>
+        <h3>Listado de Productos para Modificar/Eliminar</h3>
+        <!-- Listado dinámico de productos que se cargará desde la BD -->
+        <div id="listado-productos">
+            <!-- Aquí se insertará una tabla con los productos usando PHP -->
+        </div>
+    </div>
+    <script>
+        // Código JavaScript para validaciones adicionales y AJAX
+        // (Ejemplo: verificación de lote único, cálculo de total, habilitar botón eliminar, etc.)
+    </script>
+</body>
+</html>
+
+
+Querys de MySQL para las Operaciones (Ingreso, Eliminación y Modificación)
+El software cliente (por ejemplo, un script PHP llamado gestionar_producto.php) procesa las solicitudes del formulario y ejecuta las sentencias SQL correspondientes. La conexión a la base de datos se realiza utilizando las funciones del lenguaje de programación, como se describe en los materiales ("Permitiendo la gestión de los datos en un sistema informático").
+Estructura de la Base de Datos (MySQL) - Tabla productos
+CREATE TABLE productos (
+    id_producto INT AUTO_INCREMENT PRIMARY KEY COMMENT 'ID único del producto',
+    codigo_barra VARCHAR(20) COMMENT 'Código de barra del fabricante',
+    codigo_qr VARCHAR(255) COMMENT 'Información del código QR',
+    nombre_producto VARCHAR(100) NOT NULL COMMENT 'Nombre del producto',
+    ruta_imagen VARCHAR(255) COMMENT 'Ruta de la imagen en el servidor',
+    id_lote INT NOT NULL UNIQUE COMMENT 'Identificador de lote único',
+    tipo_producto ENUM('oficina', 'escolar', 'muebleria') NOT NULL COMMENT 'Tipo de producto',
+    ciudad ENUM('Santiago', 'Valparaiso') NOT NULL COMMENT 'Ciudad de la tienda',
+    num_estante CHAR(3) NOT NULL COMMENT 'Número de estante de 3 dígitos',
+    cant_inventario_piezas INT NOT NULL DEFAULT 0 COMMENT 'Cantidad de piezas sueltas',
+    cant_cajas INT NOT NULL DEFAULT 0 COMMENT 'Cantidad de cajas/empaques',
+    piezas_por_caja INT NOT NULL DEFAULT 1 COMMENT 'Piezas por caja/empaque'
+    -- El campo total_piezas_inventariada se calcula en las consultas
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- Restricción CHECK para num_estante (si la versión de MySQL lo soporta)
+ALTER TABLE productos ADD CONSTRAINT chk_num_estante CHECK (num_estante REGEXP '^[0-9]{3}$');
+
+
+1. Query para Ingreso de Datos (INSERT)
+Cuando se recibe una solicitud del formulario con accion = 'guardar' y sin id_producto, se ejecuta una sentencia INSERT.
+INSERT INTO productos (
+    codigo_barra,
+    codigo_qr,
+    nombre_producto,
+    ruta_imagen,
+    id_lote,
+    tipo_producto,
+    ciudad,
+    num_estante,
+    cant_inventario_piezas,
+    cant_cajas,
+    piezas_por_caja
+) VALUES (
+    '7801234567890', -- Valor de $_POST['codigo_barra']
+    'URL_o_texto_QR', -- Valor de $_POST['codigo_qr']
+    'Cuaderno Universitario 100 Hojas', -- Valor de $_POST['nombre_producto']
+    'uploads/cuaderno.jpg', -- Ruta procesada del archivo $_FILES['imagen_producto']
+    10203040, -- Valor de $_POST['id_lote']
+    'escolar', -- Valor de $_POST['tipo_producto']
+    'Santiago', -- Valor de $_POST['ciudad']
+    '045', -- Valor de $_POST['num_estante']
+    15, -- Valor de $_POST['cant_inventario_piezas']
+    5, -- Valor de $_POST['cant_cajas']
+    10 -- Valor de $_POST['piezas_por_caja']
+);
+
+
+2. Query para Modificación de Datos (UPDATE)
+Cuando se recibe una solicitud con accion = 'guardar' y con un id_producto válido, se ejecuta una sentencia UPDATE para modificar el registro existente.
+UPDATE productos
+SET
+    codigo_barra = '7809876543210', -- Nuevo valor de $_POST['codigo_barra']
+    codigo_qr = 'Nuevo_texto_QR', -- Nuevo valor de $_POST['codigo_qr']
+    nombre_producto = 'Mochila Escolar Reforzada', -- Nuevo valor de $_POST['nombre_producto']
+    ruta_imagen = 'uploads/mochila_nueva.jpg', -- Actualizar solo si se subió un nuevo archivo
+    id_lote = 55667788, -- Nuevo valor de $_POST['id_lote']
+    tipo_producto = 'escolar', -- Nuevo valor de $_POST['tipo_producto']
+    ciudad = 'Valparaiso', -- Nuevo valor de $_POST['ciudad']
+    num_estante = '112', -- Nuevo valor de $_POST['num_estante']
+    cant_inventario_piezas = 8, -- Nuevo valor de $_POST['cant_inventario_piezas']
+    cant_cajas = 3, -- Nuevo valor de $_POST['cant_cajas']
+    piezas_por_caja = 1 -- Nuevo valor de $_POST['piezas_por_caja']
+WHERE id_producto = 15; -- El ID del producto que se está modificando
+
+
+3. Query para Eliminación de Datos (DELETE)
+Cuando se recibe una solicitud con accion = 'eliminar' y un id_producto válido, se ejecuta una sentencia DELETE.
+DELETE FROM productos
+WHERE id_producto = 23; -- El ID del producto a eliminar
+
+
+4. Query para Consulta y Listado de Productos (SELECT)
+Para poblar la lista de productos que permite seleccionar uno para modificar o eliminar, se utiliza una sentencia SELECT. Esta consulta también calcula el total_piezas_inventariada.
+SELECT
+    id_producto,
+    nombre_producto,
+    id_lote,
+    ciudad,
+    num_estante,
+    cant_inventario_piezas,
+    cant_cajas,
+    piezas_por_caja,
+    (cant_inventario_piezas + (cant_cajas * piezas_por_caja)) AS total_piezas_inventariada
+FROM productos
+ORDER BY nombre_producto ASC;
+
+
+Este resultado se itera en el lado del servidor (PHP) para generar una tabla HTML con botones "Modificar" y "Eliminar" junto a cada producto. El botón "Modificar" cargaría los datos del producto en el formulario principal para su edición, habilitando así el botón "Eliminar".
+Justificación de los Querys y Procedimientos
+Uso de Querys de MySQL: Las sentencias INSERT, UPDATE y DELETE son la implementación directa de lo solicitado: "Querys (MySQL) de inserción, modificación, eliminación y actualización de datos". El UPDATE específicamente cumple con la "actualización de datos".
+Validaciones a Nivel de Base de Datos: Las restricciones definidas en la tabla productos (NOT NULL, UNIQUE, ENUM, CHECK) trabajan en conjunto con las sentencias SQL. Si un INSERT o UPDATE intenta violar alguna de estas restricciones (por ejemplo, insertar un id_lote duplicado o un num_estante con letras), MySQL rechazará el comando y devolverá un error. El software cliente (PHP) debe capturar este error y mostrar un mensaje apropiado al usuario. Esto completa el ciclo de validación, asegurando que incluso si un dato malicioso o erróneo evade las comprobaciones del formulario, la última barrera de la base de datos protegerá la integridad de la información.
+Cálculo del Total: El campo "total de piezas inventariada" se calcula en la consulta SELECT y se muestra en el listado y en el formulario de edición, pero no se almacena en la tabla. Esto evita la redundancia y garantiza que el total siempre sea consistente con los datos de los que deriva. Esta práctica de cálculo sobre la marcha es un ejemplo de cómo mantener la "información fiable y valiosa" que menciona el texto, evitando errores de inconsistencia.
+Al elaborar el formulario de esta manera y al ejecutar estas sentencias SQL precisas contra MySQL, se proporciona una solución completa y robusta para la gestión del inventario de la librería, abordando directamente los problemas de lentitud y errores de los métodos manuales anteriores.
+Examina o inspecciona el almacenamiento de datos desde los formularios hasta la base de datos, con la finalidad de comprobar la validez de la información del registro de los libros.
+La inspección del almacenamiento de datos desde el formulario hasta la base de datos es un proceso de auditoría técnica que verifica cada etapa del flujo de información para comprobar la validez final de la información registrada sobre los productos de la librería. Este examen no se limita a una simple revisión visual de la base de datos, sino que implica un análisis forense de las transformaciones, validaciones y barreras que los datos deben superar desde que son capturados en el navegador del usuario hasta que se convierten en un registro persistente en los archivos del SGBD. La finalidad es garantizar que el dato que reside en la base de datos es exacto, seguro, consistente y apto para el propósito deseado, erradicando los errores de inconsistencia que aquejaban al sistema previo de papel y hojas de cálculo.
+El examen se estructura en una inspección por capas, cada una con mecanismos específicos que contribuyen a la validez de los datos.
+Capa 1: Inspección en el Origen - El Formulario HTML y las Validaciones del Cliente
+El primer punto de inspección es el propio formulario HTML. El examen debe verificar que:
+La implementación de "Cuadros desplegables" (<select>) es correcta: Se inspecciona el código fuente para confirmar que los campos "tipo de producto" y "ciudad" utilizan el elemento <select> con opciones <option> cuyos valores coinciden exactamente con los permitidos en la definición ENUM de la base de datos ('oficina', 'escolar', 'muebleria' y 'Santiago', 'Valparaiso'). Esto asegura que el dato enviado al servidor esté forzosamente dentro del dominio de valores válidos, cumpliendo con la función del procedimiento de "Cuadro desplegable".
+La presencia de atributos de validación HTML5 es efectiva: Se examina que los campos obligatorios tengan el atributo required (Comprobación de presencia). Se verifica que el campo "número de estante" tenga los atributos pattern="\d{3}" y maxlength="3" (Comprobación de longitud y Formato de verificación). Se comprueba que los campos numéricos usen type="number" con sus respectivos atributos min (Verificación de tipo y de rango). Estas validaciones actúan como una comprobación automática para garantizar que los datos introducidos resulten razonables y viables antes del envío, disminuyendo el número de errores en el ingreso.
+La existencia de validaciones asíncronas para el "Identificador único": Se inspecciona el código JavaScript (AJAX) que verifica la unicidad del "id_lote" contra el servidor en tiempo real. Esta validación, aunque no reemplaza la restricción UNIQUE de la base de datos, previene proactivamente el error de "clave duplicada", mejorando la experiencia del usuario y evitando un viaje fallido al servidor. Es una aplicación práctica del concepto de "Identificador único" que valida que los datos no estén duplicados.
+Capa 2: Inspección en el Tránsito - El Software Cliente y la Conexión a la Base de Datos (CBD)
+El segundo punto de inspección se centra en el código del lado del servidor (ej. gestionar_producto.php). Aquí se examina:
+La correcta construcción de la Cadena de Conexión: Se revisa el código fuente para asegurar que la conexión a la base de datos (CBD) se establece con las credenciales correctas (Server, User ID, Pwd, Database). Una conexión exitosa es un prerrequisito para cualquier gestión de datos, tal como se subraya en los materiales de estudio: "no se permite ejecutar comandos a una BD sin una conexión disponible y abierta".
+La higiene en el manejo de datos (Sanitización): Se examina cómo el software cliente recibe los datos del formulario (a través de $_POST y $_FILES en PHP). Se verifica que se estén utilizando técnicas para prevenir la inyección SQL, como "consultas preparadas" (prepared statements) o el escape adecuado de caracteres especiales. Aunque no es una validación de datos en sí misma, esta práctica es crucial para la seguridad de los datos y para evitar la corrupción o pérdida de información, uno de los beneficios clave de una correcta validación e integración.
+La lógica de cálculo para el campo derivado: Se inspecciona el código para confirmar que el campo "total de piezas inventariada" no se recibe del formulario ni se inserta directamente en la base de datos. En su lugar, se verifica que la sentencia INSERT o UPDATE omite este campo, y que su valor se calcula dinámicamente en las consultas SELECT utilizando la fórmula (cant_inventario_piezas + (cant_cajas * piezas_por_caja)). Esto es una verificación de la integridad de los datos, asegurando que el total sea siempre la suma correcta y eliminando una fuente potencial de inconsistencia.
+Capa 3: Inspección en el Destino - El SGBD MySQL y sus Restricciones (Constraints)
+El tercer y más definitivo punto de inspección es la estructura de la tabla productos en MySQL y las operaciones de almacenamiento. Aquí se realiza una comprobación de la validez de la información a nivel de sistema.
+Inspección del Esquema de la Tabla: Se ejecuta el comando DESCRIBE productos; o SHOW CREATE TABLE productos;. Este examen confirma que:
+Los tipos de datos (INT, VARCHAR, ENUM, CHAR) se corresponden con la naturaleza del dato (Verificación de tipo).
+La restricción NOT NULL está presente en los campos obligatorios (Comprobación de presencia a nivel de base de datos).
+La restricción UNIQUE está aplicada sobre la columna id_lote. Esta es la implementación final y más robusta del "Identificador único".
+El campo num_estante está definido como CHAR(3) y tiene una restricción CHECK que valida su formato numérico (REGEXP '^[0-9]{3}$').
+Las columnas tipo_producto y ciudad son de tipo ENUM, lo que restringe inherentemente sus valores a las opciones del "Cuadro desplegable".
+Verificación del Resultado de Comandos SQL: Se simula la ejecución de comandos INSERT, UPDATE y DELETE con datos tanto válidos como inválidos para observar el comportamiento del SGBD.
+Caso Válido: Se introduce un registro que cumple con todas las reglas. Se verifica que el comando se ejecuta con éxito (Query OK, 1 row affected).
+Caso Inválido (Violación de UNIQUE): Se intenta insertar un registro con un id_lote ya existente. Se inspecciona el error devuelto por MySQL: ERROR 1062 (23000): Duplicate entry '...' for key 'productos.id_lote'. Esto confirma que la restricción de Identificador único está activa y protegiendo la integridad de los datos, evitando la presencia de duplicidades.
+Caso Inválido (Violación de CHECK o ENUM): Se intenta insertar un registro con un num_estante que contiene letras (ej. 'A12') o una ciudad no listada (ej. 'Concepción'). Se observa el error de MySQL: ERROR 3819 (HY000): Check constraint 'chk_num_estante' is violated. o ERROR 1265 (01000): Data truncated for column 'ciudad' at row 1. Estos errores demuestran que las Comprobaciones de formato, longitud y rango se aplican rigurosamente, impidiendo que datos sin sentido o fuera de dominio sean almacenados.
+Conclusión de la Inspección
+La inspección exhaustiva del flujo de almacenamiento revela un sistema de validación en múltiples capas. Los datos que finalmente residen en la tabla productos han sobrevivido a:
+Validaciones inmediatas de formato y presencia en el navegador.
+Una verificación proactiva de unicidad para el lote.
+La sanitización y el uso de consultas preparadas en el servidor web.
+La aplicación de todas las restricciones de integridad del SGBD (NOT NULL, UNIQUE, CHECK, ENUM).
+Por lo tanto, se puede afirmar con un alto grado de confianza que la información del registro de los productos de la librería es válida. Los datos son exactos (cumplen con el tipo y formato), seguros (protegidos contra inyección SQL), completos (no faltan campos obligatorios) y consistentes (el total se calcula correctamente y el lote es único). Este proceso meticuloso de inspección confirma que el nuevo sistema web ha eliminado la causa raíz de los problemas de lentitud e inconsistencia del método manual anterior, proporcionando una "única fuente de verdad" fiable para la toma de decisiones en "Mis útiles escolares".
+
+
+
+
+REFERENCIAS BIBLIOGRÁFICAS
+
+Las referencias deben ser presentadas de acuerdo con las Normas APA, incluyendo información que permita ubicar de forma inmediata la fuente utilizada.
+Recuerda que siempre debes incluir el texto de lectura relacionado con la semana a evaluar.
+
+Apellido del autor(es) y la inicial del nombre (año de publicación). Título de la publicación. N° de edición. Ciudad o país: Editorial.
+
+Ejemplo texto de lectura de IACC:
+IACC. (2021). Habilidades para el aprendizaje en la modalidad online. Desarrollo de Habilidades para el Aprendizaje. Semana 1
+
+Ejemplo referencia: libro
+Wagensberg, J. (2017). Teoría de la creatividad: eclosión, gloria y miseria de las ideas. 1.ª edición: Barcelona, España: Tusquets editores.
+
+Ejemplo referencia: capítulo de libro
+Navas, A. (2015). “Educación en un nuevo entorno”. En: L. Castellón, A. Guillier y   M. J. Labrador (2015). Comunicación, redes y poder. Santiago de Chile: RIL editores.
+
+Ejemplo referencia: artículo de revista académica
+Lagos, C. (2012). El mapudungún en Santiago de Chile: vitalidad y representaciones sociales en los mapuches urbanos. Revista de Lingüística Teórica y Aplicada, 50(1), pp. 161-190. Universidad de Concepción. DOI: http://dx.doi.org/10.4067/S0718-48832012000100008
+
+Ejemplo de referencia: artículo en sitio web
+Ministerio del Medio Ambiente (MMA). (s. f.). Planes de recuperación, conservación y gestión de especies. http://portal.mma.gob.cl/biodiversidad/planes-de-recuperacion-conservacion-y-gestion-de-especies/
+
+Ejemplo de referencia: ley o decreto
+Ley 19300 (2016). Aprueba Ley sobre Bases Generales del Medio Ambiente. (9 de marzo de 1994) En Biblioteca del Congreso Nacional de Chile. https://www.leychile.cl/Navegar?idNorma=30667
+
+ Ejemplo de imagen de referencia:
+Consejo Superior de Investigaciones Científicas. (2011). Virus VIH [Fotografía]. Flickr. https://flic.kr/p/aronSf
+
+
