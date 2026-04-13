@@ -68,6 +68,7 @@ if (isset($_GET['edit'])) {
                         <div class="form-group">
                             <label for="id_lote">ID de Lote (Único) *</label>
                             <input type="number" id="id_lote" name="id_lote" required value="<?php echo htmlspecialchars($product['id_lote']); ?>">
+                            <span id="lote-error-msg" style="color: #ef4444; font-size: 0.75rem; margin-top: 0.25rem; display: none;"></span>
                         </div>
                     </div>
 
@@ -216,6 +217,30 @@ if (isset($_GET['edit'])) {
             const total = piezas + (cajas * pxCaja);
             document.getElementById('total_display').innerText = total;
         }
+
+        // Capa 1: Validación Asíncrona (AJAX) para ID Lote
+        document.getElementById('id_lote').addEventListener('blur', function() {
+            const idLote = this.value;
+            const idProducto = document.querySelector('input[name="id_producto"]').value;
+            const errorSpan = document.getElementById('lote-error-msg');
+            
+            if (!idLote) return;
+
+            fetch(`gestionar_producto.php?check_lote=${idLote}&exclude_id=${idProducto}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.exists) {
+                        errorSpan.innerText = '⚠️ Este lote ya está registrado.';
+                        errorSpan.style.display = 'block';
+                        this.setCustomValidity('Lote duplicado');
+                    } else {
+                        errorSpan.innerText = '';
+                        errorSpan.style.display = 'none';
+                        this.setCustomValidity('');
+                    }
+                });
+        });
+
         // Initialize total on load
         updateTotal();
     </script>

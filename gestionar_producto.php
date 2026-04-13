@@ -1,10 +1,22 @@
 <?php
 require_once 'db_connection.php';
 
+// Capa 1: Validación Asíncrona (endpoint para AJAX)
+if (isset($_GET['check_lote'])) {
+    $lote = (int)$_GET['check_lote'];
+    $exclude_id = isset($_GET['exclude_id']) ? (int)$_GET['exclude_id'] : 0;
+    
+    $query = "SELECT id_producto FROM productos WHERE id_lote = $lote AND id_producto != $exclude_id";
+    $result = $conexion->query($query);
+    
+    echo json_encode(['exists' => ($result && $result->num_rows > 0)]);
+    exit();
+}
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $accion = $_POST['accion'] ?? '';
     
-    // Sanitize common inputs
+    // Capa 2: Sanitización de datos para evitar Inyección SQL
     $nombre = $conexion->real_escape_string($_POST['nombre_producto']);
     $codigo_barra = $conexion->real_escape_string($_POST['codigo_barra']);
     $id_lote = (int)$_POST['id_lote'];
